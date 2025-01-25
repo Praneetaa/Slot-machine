@@ -2,7 +2,8 @@
   "name": "slot-machine",
   "version": "1.0.0",
   "main": "project.js",
-  "scripts": {
+  "scripts": { 
+    "start": "node project.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
