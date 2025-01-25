@@ -63,7 +63,6 @@ const getBet = (balance, lines) => {
         if (isNaN(numberBet) || numberBet <= 0 || numberBet > balance / lines) {
             console.log("Invalid bet. Please enter again.");
         } else {
-            console.log("Your placed bet per lines: ",numberBet);
             return numberBet;
         }
     }
@@ -103,11 +102,76 @@ const transpose = (reels) => {
     return rows;
 };
 
-let balance = deposit();
-const lines = getNumberofLines();
-const bet = getBet(balance, lines);
-const reels = spin(); 
-const rows = transpose(reels);
+const printRows = (rows) =>{
+    for(const row of rows) {
+        let rowString = "";
+        for (const [i, symbol] of row.entries()) {
+            rowString += symbol
+            if (i != row.length -1) {
+                rowString += " | "
+            }
 
-console.log(reels);
-console.log(rows);
+        }
+        console.log(rowString);
+    }
+}
+
+const getWinnings = (rows, bet, lines) => {
+    let winnings = 0;
+    
+    for (let row = 0; row < lines; row++) {
+        const symbols = rows[row];
+        let allSame = true;
+
+        for (const symbol of symbols) {
+            if (symbol != symbols[0]){
+                allSame = false;
+                break;
+            }
+        }
+        if (allSame) {
+            winnings += bet * SYMBOLS_VALUES[symbols[0]];
+        }
+
+    }
+
+    return winnings;
+
+}
+
+const game = () => {
+    let balance = deposit();
+    
+    while (true) {
+        console.log("You have a balance of $" + balance);
+        const lines = getNumberofLines();
+        const bet = getBet(balance, lines);
+        balance -= bet * lines;
+        const reels = spin(); 
+        const rows = transpose(reels);
+        printRows (rows);
+        const winnings = getWinnings (rows, bet, lines);
+        balance += winnings;
+        console.log("You Won! $", + winnings.toString());
+        
+        if (balance <= 0) {
+            console.log ("Sorry, you ran out of money!");
+            
+            const depositAgain = prompt("Do you want to deposit more money? (y/n)").toLowerCase();
+            
+            if (depositAgain === 'y' || depositAgain === 'yes') {
+                balance += deposit();
+                continue;
+                } 
+                else {
+                    console.log("Thank you for playing!");
+                    break;
+                }
+            }
+
+                const playAgain = prompt("Do you want to play again (y/n)? ").toLowerCase();
+                if (playAgain !== 'y' && playAgain !== 'yes') break;
+        }
+    }
+
+game();
